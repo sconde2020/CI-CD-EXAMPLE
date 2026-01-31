@@ -18,7 +18,7 @@ jobs:
       - name: Create KIND cluster
         uses: helm/kind-action@v1
         with:
-          cluster-name: kind
+          cluster_name: kind
 
       - name: Debug KIND cluster
         run: |
