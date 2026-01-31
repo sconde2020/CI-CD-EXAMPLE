@@ -10,24 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Build Docker image
         run: docker build -t backend:${{ github.sha }} .
 
-      - name: Push Docker image (optionnel local)
-        run: echo "Skipped for local test"
+      - name: Push Docker image (skipped for local test)
+        run: echo "Skipping push step"
 
       - name: Setup kubeconfig
         run: |
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig
+          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
 
-      - name: Generate ServiceAccount token
-        run: |
-          TOKEN=$(kubectl create token ci-deployer -n backend)
-          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+      - name: Verify cluster access
+        run: kubectl get pods -n backend
 
       - name: Deploy to Kubernetes
         run: |
