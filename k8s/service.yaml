@@ -8,5 +8,5 @@ spec:
   selector:
     app: backend # Tells the Service which Pods to send traffic to. Matches the 'app: backend' label in the Deployment.
   ports:
-    - port: 80 # The port that the Service will expose inside the cluster.
+    - port: 8080 # The port that the Service will expose inside the cluster.
       targetPort: 80 # The port on the Pod (container) that the Service will forward traffic to.

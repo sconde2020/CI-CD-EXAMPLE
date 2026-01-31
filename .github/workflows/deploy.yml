@@ -57,5 +57,5 @@ jobs:
           POD_NAME=$(kubectl get pod -n backend -l app=backend -o jsonpath="{.items[0].metadata.name}")
           echo "Testing Nginx on pod: $POD_NAME"
           # Execute curl inside the pod to check Nginx
-          kubectl exec -n backend $POD_NAME -- curl -s -o /dev/null -w "%{http_code}" http://localhost:80
+          kubectl exec -n backend $POD_NAME -- curl -s -o /dev/null -w "%{http_code}" http://localhost:8080
           # The expected output is "200" if Nginx is working correctly
