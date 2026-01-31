@@ -1,0 +1,36 @@
+# .github/workflows/deploy.yml
+name: CI/CD Backend
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t backend:${{ github.sha }} .
+
+      - name: Push Docker image (optionnel local)
+        run: echo "Skipped for local test"
+
+      - name: Setup kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
+
+      - name: Generate ServiceAccount token
+        run: |
+          TOKEN=$(kubectl create token ci-deployer -n backend)
+          echo "TOKEN=$TOKEN" >> $GITHUB_ENV
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/backend \
+            backend=backend:${{ github.sha }} \
+            -n backend
