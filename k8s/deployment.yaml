@@ -1,21 +1,21 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1 # This tells Kubernetes which version of the API to use for this resource. 'apps/v1' is used for Deployments.
+kind: Deployment # The type of Kubernetes resource. Deployment manages Pods and ensures the desired number of replicas are running.
 metadata:
-  name: backend
-  namespace: backend
+  name: backend # Name of the Deployment. Must be unique within the namespace.
+  namespace: backend # The Kubernetes namespace where this Deployment will live. Namespaces help organize resources.
 spec:
-  replicas: 1
+  replicas: 1 # Number of Pod copies you want running. Here we just want 1.
   selector:
     matchLabels:
-      app: backend
-  template:
+      app: backend # This tells the Deployment which Pods it manages. Pods with label app=backend are included.
+  template: # Template for the Pods the Deployment will create
     metadata:
       labels:
-        app: backend
+        app: backend # Labels assigned to the Pods. Must match the selector above.
     spec:
       containers:
-        - name: backend
-          image: backend:test
-          imagePullPolicy: IfNotPresent
+        - name: backend # Name of the container inside the Pod
+          image: backend:test # Docker image to run. In CI/CD, we built this image as 'backend:test'
+          imagePullPolicy: IfNotPresent # Only pull the image if it’s not already on the node
           ports:
-            - containerPort: 8080
+            - containerPort: 80 # The port inside the container that the app listens on. Useful for Services to connect.

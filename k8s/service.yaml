@@ -1,12 +1,12 @@
-apiVersion: v1
-kind: Service
+apiVersion: v1 # API version for Services. 'v1' is standard for core resources like Service, Pod, ConfigMap, etc.
+kind: Service # Resource type. Service exposes Pods to other parts of the cluster or outside.
 metadata:
-  name: backend
-  namespace: backend
+  name: backend # Name of the Service. Must be unique within the namespace.
+  namespace: backend # Namespace where the Service lives. Same as your Deployment.
 spec:
-  type: NodePort
+  type: NodePort # Service type. NodePort exposes the service on a port on each cluster node. Useful for testing locally.
   selector:
-    app: backend
+    app: backend # Tells the Service which Pods to send traffic to. Matches the 'app: backend' label in the Deployment.
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 80 # The port that the Service will expose inside the cluster.
+      targetPort: 80 # The port on the Pod (container) that the Service will forward traffic to.

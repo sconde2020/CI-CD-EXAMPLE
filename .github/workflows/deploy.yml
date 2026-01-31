@@ -9,32 +9,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout the repo
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      # 2️⃣ Build Docker image (backend + Nginx)
       - name: Build Docker image
         run: docker build -t backend:test .
 
+      # 3️⃣ Create KIND cluster
       - name: Create KIND cluster
         uses: helm/kind-action@v1
         with:
           cluster_name: kind
 
+      # 4️⃣ Debug cluster
       - name: Debug KIND cluster
         run: |
           kind get clusters
           kubectl get nodes
+          kubectl cluster-info
 
+      # 5️⃣ Load Docker image into KIND
       - name: Load Docker image into KIND
         run: kind load docker-image backend:test --name kind
 
+      # 6️⃣ Deploy to Kubernetes
       - name: Deploy to Kubernetes
         run: |
+          # Create namespace if it doesn't exist
           kubectl create namespace backend || true
+          # Apply all manifests (Deployment + Service)
           kubectl apply -f k8s/
 
-      - name: Wait for deployment rollout
+      # 7️⃣ Wait for deployment rollout
+      - name: Wait for backend rollout
         run: kubectl rollout status deployment/backend -n backend
 
+      # 8️⃣ Check Pods
       - name: Check pods
         run: kubectl get pods -n backend
+
+      # 9️⃣ Test Nginx server inside the cluster
+      - name: Test Nginx server
+        run: |
+          # Get the first backend pod name
+          POD_NAME=$(kubectl get pod -n backend -l app=backend -o jsonpath="{.items[0].metadata.name}")
+          echo "Testing Nginx on pod: $POD_NAME"
+          # Execute curl inside the pod to check Nginx
+          kubectl exec -n backend $POD_NAME -- curl -s -o /dev/null -w "%{http_code}" http://localhost:80
+          # The expected output is "200" if Nginx is working correctly
