@@ -31,7 +31,6 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           kubectl create namespace backend || true
-          kubectl wait --for=condition=Active namespace/backend --timeout=30s
           kubectl apply -f k8s/
 
       - name: Wait for deployment rollout
