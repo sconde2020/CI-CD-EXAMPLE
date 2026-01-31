@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup kubeconfig
         run: |
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" > kubeconfig
           echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
 
       - name: Verify cluster access
