@@ -1,4 +1,3 @@
-# rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -19,6 +18,11 @@ rules:
       - create
       - patch
       - update
+  - apiGroups: [""]
+    resources:
+      - serviceaccounts/token
+    verbs:
+      - create
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
