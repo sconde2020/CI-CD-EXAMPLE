@@ -1,11 +1,10 @@
-# deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
   namespace: backend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -16,6 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: nginx:latest
+          image: backend:test
+          imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - containerPort: 8080
